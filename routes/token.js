@@ -4,7 +4,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 router.get('/', function (req,res,next) {
-  res.send("Route File Works");
+  if (req.user) {
+    res.send(true);
+  } else {
+    res.send(false);
+  }
 });
 
 router.post('/', function (req,res,next) {
@@ -13,7 +17,8 @@ router.post('/', function (req,res,next) {
     name: 'Teddi Maull',
     superPower: 'Cuddling',
     email: 'teddi.maull@galvanize.com',
-    hash: '$2a$08$uShlVLTKX1ZeRuK8iPDn8.FRl/SxgW.zEpJgYtkBCxITBYohVqaDm'
+    hash: '$2a$08$uShlVLTKX1ZeRuK8iPDn8.FRl/SxgW.zEpJgYtkBCxITBYohVqaDm',
+    isTrustedByBatman: false
   }
 
   let body = req.body;
@@ -39,5 +44,16 @@ router.post('/', function (req,res,next) {
   res.send();
 
 });
+
+router.use('/myData',isLoggedIn,function(req,res,next) {
+  res.send(req.user);
+});
+
+function isLoggedIn(req,res,next) {
+  if (req.user) {
+    return next();
+  }
+  res.redirect('https://en.wikipedia.org/wiki/Batman');
+}
 
 module.exports = router;
